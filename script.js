@@ -256,6 +256,11 @@ function renderRiepilogo() {
             badge.className = 'summary-badge';
             badge.innerText = `G${giornata}`;
 
+            const badgeF = document.createElement('div');
+            badgeF.className = 'summary-spacer';
+            badgeF.innerText = `G${giornata}`;
+            badgeF.style.visibility = 'hidden';
+
             const sep = document.createElement('div');
             sep.className = 'summary-sep';
             sep.innerText = '-';
@@ -264,6 +269,7 @@ function renderRiepilogo() {
             li.appendChild(getTeamDiv(match.homeTeam.id, isHomePicked, 'right'));
             li.appendChild(sep);
             li.appendChild(getTeamDiv(match.awayTeam.id, !isHomePicked, 'left'));
+            li.appendChild(badgeF);
 
             list.appendChild(li);
         }
@@ -338,8 +344,7 @@ async function condividiImmagine() {
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({
                     files: [file],
-                    title: 'Il mio piano Squid Serie A',
-                    text: 'Ecco le mie scelte per la Serie A! Che ne pensi?'
+                    title: 'Il mio piano Squid Serie A'
                 });
             } else {
                 alert("Il sistema non permette la condivisione di questo file.");

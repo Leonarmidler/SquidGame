@@ -21,6 +21,12 @@ header {
     margin-bottom: 20px;
 }
 
+ul, ol {
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none;
+}
+
 h1 {
     color: var(--serie-a-blue);
     font-weight: 900;
@@ -285,7 +291,7 @@ details.pre-selection[open] summary::after {
     background: white;
     border-radius: 16px;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
-    padding: 25px;
+    padding: 10px;
     max-width: 700px;
     margin: 30px auto 0 auto;
     border: 1px solid #e0e4e8;
@@ -305,18 +311,29 @@ details.pre-selection[open] summary::after {
 
 .summary-item {
     display: grid;
-    grid-template-columns: 50px 1fr 20px 1fr;
+    grid-template-columns: 50px 1fr 20px 1fr 50px;
     align-items: center;
     gap: 10px;
-    padding: 10px 0;
+    padding: 10px;
     border-bottom: 1px solid #eee;
     font-size: 0.9rem;
 }
 
+.summary-spacer {
+    background: #eee;
+    color: #666;
+    padding: 4px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+
 .summary-badge {
     background: #eee;
     color: #666;
-    padding: 4px 0;
+    padding: 4px;
     border-radius: 6px;
     font-size: 0.75rem;
     font-weight: 700;
@@ -373,7 +390,7 @@ details.pre-selection[open] summary::after {
 .watermark {
     margin: 25px;
     text-align: center;
-    font-size: 0.4rem;
+    font-size: 0.55rem;
     color: #999;
     text-transform: uppercase;
     letter-spacing: 2px;
