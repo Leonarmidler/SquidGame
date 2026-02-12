@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SQUID SERIE A - Fixed Edition</title>
+    <title>SQUID SERIE A</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="icon" href="https://leonarmidler.github.io/SquidGame/icon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    
+
 
 </head>
+
 <body>
 
     <header>
@@ -20,12 +22,14 @@
 
     <div id="loading">
         <div id="loadingText">⏳ Caricamento dati...</div>
-        <div class="loading-bar"><div id="progressBar" class="loading-progress"></div></div>
+        <div class="loading-bar">
+            <div id="progressBar" class="loading-progress"></div>
+        </div>
     </div>
 
     <div id="mainContent" style="display: none; max-width: 700px; margin: 0 auto;">
         <details class="pre-selection">
-            <summary>Squadre già usate (Passato)</summary>
+            <summary>Squadre già usate</summary>
             <div class="pre-selection-content">
                 <div id="preSelectionGrid" class="pre-selection-grid"></div>
             </div>
@@ -39,12 +43,25 @@
     <div id="summaryContainer" class="summary-section" style="display: none;">
         <div class="summary-title">LE MIE SCELTE</div>
         <ul id="summaryList" class="summary-list"></ul>
-        <div class="watermark">Pianificato con <span>SQUID SERIE A</span></div>
+        <div class="watermark">Pianificato con <span>SQUID GAME</span> by <span>Leonardo</span></div>
         <div class="action-area" data-html2canvas-ignore="true">
-            <button class="btn-download" onclick="scaricaImmagine()">📸 Salva Immagine</button>
+            <div class="action-area" data-html2canvas-ignore="true"
+                style="margin-top: 30px; display: flex; justify-content: center; gap: 25px; padding-bottom: 20px;">
+
+                <button class="btn-download" onclick="scaricaImmagine()" title="Salva"
+                    style="width: 55px; height: 55px; border-radius: 50%; background: white; border: 1.5px solid #eee; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                    <img src="png/download.png" alt="Salva" style="width: 28px; height: 28px; object-fit: contain;">
+                </button>
+
+                <button class="btn-download" id="btnShare" onclick="condividiImmagine()" title="Condividi"
+                    style="width: 55px; height: 55px; border-radius: 50%; background: white; border: 1.5px solid #eee; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                    <img src="png/share.png" alt="Condividi" style="width: 28px; height: 28px; object-fit: contain;">
+                </button>
+            </div>
         </div>
     </div>
 
     <script src="script.js" defer></script>
 </body>
+
 </html>
