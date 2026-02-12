@@ -318,10 +318,10 @@ async function condividiImmagine() {
 
     try {
         // 1. Genera il canvas
-        const canvas = await html2canvas(elemento, { 
-            backgroundColor: "#ffffff", 
+        const canvas = await html2canvas(elemento, {
+            backgroundColor: "#ffffff",
             scale: 2,
-            useCORS: true 
+            useCORS: true
         });
 
         // 2. Trasforma il canvas in un Blob (dati binari)
@@ -344,7 +344,7 @@ async function condividiImmagine() {
             } else {
                 alert("Il sistema non permette la condivisione di questo file.");
             }
-            
+
             btn.innerHTML = originalText;
             btn.disabled = false;
         }, 'image/png');
