@@ -311,7 +311,7 @@ details.pre-selection[open] summary::after {
 
 .summary-item {
     display: grid;
-    grid-template-columns: 50px 1fr 20px 1fr 50px;
+    grid-template-columns: auto 1fr 20px 1fr auto;
     align-items: center;
     gap: 10px;
     padding: 10px;
@@ -328,7 +328,6 @@ details.pre-selection[open] summary::after {
     font-weight: 700;
     text-align: center;
 }
-
 
 .summary-badge {
     background: #eee;
