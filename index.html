@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SQUID SERIE A - Fixed Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --serie-a-blue: #00419B;
+            --serie-a-cyan: #00D7C9;
+            --bg-color: #F0F4F8;
+            --card-bg: #FFFFFF;
+            --text-color: #172B4D;
+            --danger-color: #FF4B4B;
+        }
+
+        body { 
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 15px; padding-bottom: 80px; 
+        }
+        
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { color: var(--serie-a-blue); font-weight: 900; text-transform: uppercase; font-size: 1.8rem; margin: 0; }
+        .subtitle { color: #666; margin-top: 5px; font-size: 0.9rem;}
+
+        #loading { text-align: center; padding: 50px; font-weight: bold; color: var(--serie-a-blue); }
+        .loading-bar { width: 200px; height: 4px; background: #ddd; margin: 10px auto; border-radius: 2px; overflow: hidden; }
+        .loading-progress { width: 0%; height: 100%; background: var(--serie-a-cyan); transition: width 0.3s; }
+
+        details.pre-selection {
+            background: white; border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 30px;
+            overflow: hidden; border: 1px solid #e0e4e8;
+        }
+        details.pre-selection summary {
+            padding: 15px; font-weight: 700; color: var(--serie-a-blue);
+            cursor: pointer; list-style: none; display: flex;
+            justify-content: space-between; align-items: center;
+            outline: none;
+        }
+        details.pre-selection summary::after { content: '+'; font-size: 1.5rem; font-weight: 300; }
+        details.pre-selection[open] summary::after { content: '-'; }
+        .pre-selection-content { padding: 15px; border-top: 1px solid #f0f0f0; background-color: #fafbfc; }
+        .pre-selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+        
+        .btn-mini {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 8px;
+            background: white; border: 1px solid #ddd; border-radius: 8px;
+            cursor: pointer; font-size: 0.7rem; font-weight: 600; text-align: center;
+            outline: none; -webkit-tap-highlight-color: transparent;
+        }
+        .btn-mini.burned { background-color: #ffecec; border-color: var(--danger-color); color: var(--danger-color); text-decoration: line-through; opacity: 0.6; }
+        .btn-mini img, .btn-mini .fallback-avatar { width: 30px; height: 30px; }
+
+        .giornata-container {
+            background: var(--card-bg); border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 65, 155, 0.08); margin-bottom: 25px;
+            padding: 15px; max-width: 700px; margin: 0 auto 25px auto;
+        }
+        .giornata-header { display: flex; justify-content: center; margin-bottom: 15px; }
+        .giornata-badge {
+            background: linear-gradient(135deg, var(--serie-a-blue), #022c66);
+            color: white; padding: 6px 20px; border-radius: 50px;
+            font-weight: 700; font-size: 0.85rem; text-transform: uppercase;
+        }
+        .match-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; gap: 8px; border-bottom: 1px solid #f0f0f0; }
+        .match-row:last-child { border-bottom: none; }
+        .vs-separator { color: #ccc; font-weight: 800; font-size: 0.7rem; flex-shrink: 0; }
+
+        .btn-team {
+            flex: 1; display: flex; align-items: center; gap: 8px;
+            padding: 10px 12px; border: 2px solid transparent;
+            background-color: #f7f9fc; border-radius: 10px; 
+            cursor: pointer; 
+            transition: background-color 0.1s, border-color 0.1s; 
+            font-family: inherit; font-weight: 600; color: var(--text-color);
+            text-align: left; min-width: 0; overflow: hidden;
+            outline: none !important; 
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        .btn-team:active:not(:disabled) { transform: scale(0.98); }
+        .btn-team span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem; }
+        .btn-team img { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0; }
+
+        .fallback-avatar {
+            width: 30px; height: 30px; flex-shrink: 0;
+            background-color: #e0e4e8; color: #555;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 800; border: 1px solid #ccc;
+        }
+
+        .btn-team:hover:not(:disabled):not(.selected) { background-color: #eef2f7; border-color: #d0d7de; }
+        .btn-team.selected {
+            background-color: var(--serie-a-blue) !important; color: white !important;
+            border-color: var(--serie-a-blue) !important;
+            box-shadow: 0 4px 12px rgba(0, 65, 155, 0.3);
+        }
+        .btn-team.selected .fallback-avatar { background-color: white; color: var(--serie-a-blue); border-color: white; }
+        .btn-team.selected img { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9)); }
+        .btn-team.disabled { background-color: #fbfbfb; color: #ccc; cursor: not-allowed; opacity: 0.6; border: 1px dashed #e0e0e0; }
+
+        .load-more-container { text-align: center; margin: 20px 0; }
+        .btn-load-more {
+            background: white; border: 2px solid var(--serie-a-blue); color: var(--serie-a-blue);
+            padding: 12px 25px; border-radius: 50px; font-weight: 700; cursor: pointer;
+            outline: none; -webkit-tap-highlight-color: transparent;
+        }
+
+        .summary-section { background: white; border-radius: 16px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); padding: 25px; max-width: 700px; margin: 30px auto 0 auto; border: 1px solid #e0e4e8; text-align: center; }
+        .summary-title { color: var(--serie-a-blue); font-weight: 900; text-transform: uppercase; font-size: 1.2rem; margin-bottom: 25px; border-bottom: 3px solid var(--serie-a-cyan); display: inline-block; padding-bottom: 5px; }
+        .summary-item { display: grid; grid-template-columns: 50px 1fr 20px 1fr; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .summary-badge { background: #eee; color: #666; padding: 4px 0; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-align: center; }
+        .summary-sep { color: #ccc; font-weight: bold; text-align: center; }
+        .summary-home { display: flex; align-items: center; justify-content: flex-end; gap: 8px; text-align: right; color: #666; }
+        .summary-away { display: flex; align-items: center; justify-content: flex-start; gap: 8px; text-align: left; color: #666; }
+        .summary-logo, .summary-fallback { width: 24px; height: 24px; object-fit: contain; }
+        .summary-fallback { background: #ddd; color: #555; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: bold; }
+        .picked { color: var(--serie-a-blue); font-weight: 800; }
+        .watermark { margin: 25px; text-align: center; font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 2px; border-top: 1px solid #f0f0f0; padding-top: 15px; display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .watermark span { color: var(--serie-a-cyan); font-weight: bold; }
+        .btn-download { background-color: var(--serie-a-blue); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: 700; cursor: pointer; outline: none; }
+
+        @media (max-width: 480px) {
+            .summary-item { font-size: 0.8rem; gap: 5px; }
+            .summary-logo { width: 20px; height: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Squid Serie A</h1>
+        <div class="subtitle">Season Planner</div>
+    </header>
+
+    <div id="loading">
+        <div id="loadingText">⏳ Caricamento dati...</div>
+        <div class="loading-bar"><div id="progressBar" class="loading-progress"></div></div>
+    </div>
+
+    <div id="mainContent" style="display: none; max-width: 700px; margin: 0 auto;">
+        <details class="pre-selection">
+            <summary>Squadre già usate (Passato)</summary>
+            <div class="pre-selection-content">
+                <div id="preSelectionGrid" class="pre-selection-grid"></div>
+            </div>
+        </details>
+        <div id="app"></div>
+        <div id="loadMoreContainer" class="load-more-container" style="display: none;">
+            <button class="btn-load-more" onclick="caricaAltraGiornata()">➕ Carica prossima giornata</button>
+        </div>
+    </div>
+
+    <div id="summaryContainer" class="summary-section" style="display: none;">
+        <div class="summary-title">LE MIE SCELTE</div>
+        <ul id="summaryList" class="summary-list"></ul>
+        <div class="watermark">Pianificato con <span>SQUID SERIE A</span></div>
+        <div class="action-area" data-html2canvas-ignore="true">
+            <button class="btn-download" onclick="scaricaImmagine()">📸 Salva Immagine</button>
+        </div>
+    </div>
+
+<script>
+    const API_TOKEN = 'f1b468f93d3548668e70d6af55cf032f'; 
+    const COMPETITION_ID = 'SA'; 
+    
+    let partiteReali = [];
+    let partitePerGiornata = {};
+    let giornateTotali = []; 
+    let giornateCaricate = 0; 
+    const BATCH_SIZE = 3; 
+    const teamCache = {}; 
+    let sceltePerGiornata = {}; 
+    let squadreGiaUsate = new Set(); 
+    let squadreUsateGlobalmente = new Set(); 
+
+    async function caricaDatiReali() {
+        try {
+            const targetUrl = `https://api.football-data.org/v4/competitions/${COMPETITION_ID}/matches?status=SCHEDULED`;
+            const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
+            const response = await fetch(proxyUrl, { headers: { 'X-Auth-Token': API_TOKEN } });
+            const data = await response.json();
+            partiteReali = data.matches.map(match => ({
+                id: match.id,
+                matchday: match.matchday,
+                homeTeam: { id: match.homeTeam.id, name: match.homeTeam.shortName || match.homeTeam.name, crest: match.homeTeam.crest },
+                awayTeam: { id: match.awayTeam.id, name: match.awayTeam.shortName || match.awayTeam.name, crest: match.awayTeam.crest }
+            }));
+            await preparaCacheImmagini(partiteReali);
+        } catch (error) {
+            document.getElementById('loading').innerHTML = `Errore Caricamento 😢`;
+        }
+    }
+
+    async function preparaCacheImmagini(partite) {
+        const uniqueTeams = new Map();
+        partite.forEach(m => {
+            uniqueTeams.set(m.homeTeam.id, m.homeTeam);
+            uniqueTeams.set(m.awayTeam.id, m.awayTeam);
+        });
+        const teamsArray = Array.from(uniqueTeams.values());
+        const total = teamsArray.length;
+        let loaded = 0;
+
+        await Promise.all(teamsArray.map(async (team) => {
+            try {
+                const proxyImgUrl = "https://corsproxy.io/?" + encodeURIComponent(team.crest);
+                const resp = await fetch(proxyImgUrl);
+                const blob = await resp.blob();
+                const base64Data = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                });
+                teamCache[team.id] = { id: team.id, name: team.name, logoData: base64Data, isBase64: true };
+            } catch (e) {
+                teamCache[team.id] = { id: team.id, name: team.name, logoData: null, isBase64: false };
+            } finally {
+                loaded++;
+                document.getElementById('progressBar').style.width = `${(loaded / total) * 100}%`;
+            }
+        }));
+        avviaApp();
+    }
+
+    function avviaApp() {
+        partitePerGiornata = raggruppaPerGiornata(partiteReali);
+        giornateTotali = Object.keys(partitePerGiornata).sort((a,b) => a - b);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        renderPreSelectionGrid(); 
+        caricaAltraGiornata(BATCH_SIZE); 
+    }
+
+    function gestioneClickSquadra(teamId, matchday, btnElement) {
+        // Feedback immediato
+        const parentRow = btnElement.closest('.match-row');
+        const oldSelected = parentRow.querySelector('.btn-team.selected');
+        const wasSelected = btnElement.classList.contains('selected');
+        
+        if (oldSelected) oldSelected.classList.remove('selected');
+        if (!wasSelected) btnElement.classList.add('selected');
+        else btnElement.classList.remove('selected');
+
+        // Calcolo logico
+        setTimeout(() => {
+            if (sceltePerGiornata[matchday] === teamId) delete sceltePerGiornata[matchday];
+            else sceltePerGiornata[matchday] = teamId;
+            updateGlobalState();
+        }, 10);
+    }
+
+    function updateGlobalState() {
+        squadreUsateGlobalmente = new Set([...squadreGiaUsate, ...Object.values(sceltePerGiornata)]);
+        renderPreSelectionGrid(); 
+        aggiornaStatoVisivo();
+        renderRiepilogo();
+    }
+
+    function aggiornaStatoVisivo() {
+        document.querySelectorAll('.btn-team').forEach(btn => {
+            const tId = parseInt(btn.dataset.teamId);
+            const mDay = parseInt(btn.dataset.matchday);
+            btn.classList.remove('disabled');
+            btn.disabled = false;
+            const isSelectedHere = (sceltePerGiornata[mDay] === tId);
+            const isUsedElsewhere = squadreUsateGlobalmente.has(tId) && !isSelectedHere;
+            if (isSelectedHere) btn.classList.add('selected');
+            else btn.classList.remove('selected');
+            if (isUsedElsewhere) { btn.classList.add('disabled'); btn.disabled = true; }
+        });
+    }
+
+    function costruisciHTMLGiornata(giornata, matches) {
+        const container = document.createElement('div');
+        container.className = 'giornata-container';
+        
+        // Header
+        const header = document.createElement('div');
+        header.className = 'giornata-header';
+        header.innerHTML = `<span class="giornata-badge">Giornata ${giornata}</span>`;
+        container.appendChild(header);
+
+        // Righe partite
+        matches.forEach(match => {
+            const row = document.createElement('div');
+            row.className = 'match-row';
+            
+            // Bottone Home
+            const btnHome = creaBottoneDOM(match.homeTeam.id, match.matchday);
+            // VS
+            const vs = document.createElement('span');
+            vs.className = 'vs-separator';
+            vs.innerText = 'vs';
+            // Bottone Away
+            const btnAway = creaBottoneDOM(match.awayTeam.id, match.matchday);
+
+            row.appendChild(btnHome);
+            row.appendChild(vs);
+            row.appendChild(btnAway);
+            container.appendChild(row);
+        });
+        return container;
+    }
+
+    function creaBottoneDOM(teamId, matchday) {
+        const teamData = teamCache[teamId];
+        const btn = document.createElement('button');
+        btn.className = 'btn-team';
+        btn.dataset.teamId = teamId; 
+        btn.dataset.matchday = matchday;
+        
+        const initials = teamData.name.substring(0, 2).toUpperCase();
+        
+        if (teamData.isBase64) {
+            const img = document.createElement('img');
+            img.src = teamData.logoData;
+            btn.appendChild(img);
+        } else {
+            const avatar = document.createElement('div');
+            avatar.className = 'fallback-avatar';
+            avatar.innerText = initials;
+            btn.appendChild(avatar);
+        }
+
+        const nameSpan = document.createElement('span');
+        nameSpan.innerText = teamData.name;
+        btn.appendChild(nameSpan);
+
+        btn.onclick = (e) => gestioneClickSquadra(teamId, matchday, e.currentTarget);
+        return btn;
+    }
+
+    function renderPreSelectionGrid() {
+        const grid = document.getElementById('preSelectionGrid');
+        grid.innerHTML = '';
+        const teamIds = Object.keys(teamCache).sort((a,b) => teamCache[a].name.localeCompare(teamCache[b].name));
+        teamIds.forEach(id => {
+            const teamData = teamCache[id];
+            const btn = document.createElement('div');
+            btn.className = 'btn-mini';
+            if (squadreGiaUsate.has(parseInt(id))) btn.classList.add('burned');
+            
+            const initials = teamData.name.substring(0,2).toUpperCase();
+            if (teamData.isBase64) {
+                const img = document.createElement('img');
+                img.src = teamData.logoData;
+                btn.appendChild(img);
+            } else {
+                const avatar = document.createElement('div');
+                avatar.className = 'fallback-avatar';
+                avatar.innerText = initials;
+                btn.appendChild(avatar);
+            }
+            
+            const span = document.createElement('span');
+            span.innerText = teamData.name;
+            btn.appendChild(span);
+
+            btn.onclick = () => {
+                const tId = parseInt(id);
+                if (squadreGiaUsate.has(tId)) squadreGiaUsate.delete(tId);
+                else {
+                    squadreGiaUsate.add(tId);
+                    for (const [g, tid] of Object.entries(sceltePerGiornata)) if (tid === tId) delete sceltePerGiornata[g];
+                }
+                updateGlobalState();
+            };
+            grid.appendChild(btn);
+        });
+    }
+
+    function renderRiepilogo() {
+        const container = document.getElementById('summaryContainer');
+        const list = document.getElementById('summaryList');
+        list.innerHTML = '';
+        const giornateScelte = Object.keys(sceltePerGiornata).sort((a,b) => a - b);
+        if (giornateScelte.length === 0) { container.style.display = 'none'; return; }
+        container.style.display = 'block';
+        giornateScelte.forEach(giornata => {
+            const teamIdScelto = sceltePerGiornata[giornata];
+            const match = partiteReali.find(m => m.matchday == giornata && (m.homeTeam.id == teamIdScelto || m.awayTeam.id == teamIdScelto));
+            if (match) {
+                const li = document.createElement('li');
+                li.className = 'summary-item';
+                const isHomePicked = (match.homeTeam.id === teamIdScelto);
+                
+                const getTeamDiv = (teamId, isPicked, align) => {
+                    const teamData = teamCache[teamId];
+                    const div = document.createElement('div');
+                    div.className = align === 'right' ? 'summary-home' : 'summary-away';
+                    if (isPicked) div.classList.add('picked');
+                    
+                    const name = document.createElement('span');
+                    name.innerText = teamData.name;
+                    
+                    let media;
+                    if (teamData.isBase64) {
+                        media = document.createElement('img');
+                        media.className = 'summary-logo';
+                        media.src = teamData.logoData;
+                    } else {
+                        media = document.createElement('div');
+                        media.className = 'summary-fallback';
+                        media.innerText = teamData.name.substring(0, 2).toUpperCase();
+                    }
+
+                    if (align === 'right') {
+                        div.appendChild(name);
+                        div.appendChild(media);
+                    } else {
+                        div.appendChild(media);
+                        div.appendChild(name);
+                    }
+                    return div;
+                };
+
+                const badge = document.createElement('div');
+                badge.className = 'summary-badge';
+                badge.innerText = `G${giornata}`;
+                
+                const sep = document.createElement('div');
+                sep.className = 'summary-sep';
+                sep.innerText = '-';
+
+                li.appendChild(badge);
+                li.appendChild(getTeamDiv(match.homeTeam.id, isHomePicked, 'right'));
+                li.appendChild(sep);
+                li.appendChild(getTeamDiv(match.awayTeam.id, !isHomePicked, 'left'));
+                
+                list.appendChild(li);
+            }
+        });
+    }
+
+    function caricaAltraGiornata(quantita = 1) {
+        const appDiv = document.getElementById('app');
+        const start = giornateCaricate;
+        const end = Math.min(start + quantita, giornateTotali.length);
+        for (let i = start; i < end; i++) appDiv.appendChild(costruisciHTMLGiornata(giornateTotali[i], partitePerGiornata[giornateTotali[i]]));
+        giornateCaricate = end;
+        document.getElementById('loadMoreContainer').style.display = (giornateCaricate < giornateTotali.length) ? 'block' : 'none';
+        aggiornaStatoVisivo();
+    }
+
+    function raggruppaPerGiornata(partite) {
+        const gruppi = {};
+        partite.forEach(match => {
+            if (!gruppi[match.matchday]) gruppi[match.matchday] = [];
+            gruppi[match.matchday].push(match);
+        });
+        return gruppi;
+    }
+
+    function scaricaImmagine() {
+        const elemento = document.getElementById('summaryContainer');
+        const btn = document.querySelector('.btn-download');
+        btn.disabled = true;
+        html2canvas(elemento, { backgroundColor: "#ffffff", scale: 2 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'SquidSerieA_Scelte.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            btn.disabled = false;
+        });
+    }
+
+    caricaDatiReali();
+</script>
+</body>
+</html>
