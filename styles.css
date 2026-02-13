@@ -428,3 +428,46 @@ details.pre-selection[open] summary::after {
         height: 20px;
     }
 }
+
+/* --- OTTIMIZZAZIONE MOBILE --- */
+@media (max-width: 480px) {
+    body {
+        padding: 10px; /* Più spazio ai bordi dello schermo */
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .giornata-container {
+        padding: 12px 8px; /* Riduciamo i margini laterali interni */
+        margin-bottom: 15px;
+    }
+
+    .match-row {
+        gap: 5px; /* Spazio minimo tra i due bottoni */
+        padding: 6px 0; /* Aumentiamo lo spazio verticale tra le partite */
+    }
+
+    .btn-team {
+        padding: 12px 8px; /* Rendiamo il bottone più alto (più facile da tappare) */
+        gap: 6px;
+        border-radius: 12px; /* Angoli più morbidi */
+    }
+
+    .btn-team span {
+        font-size: 0.75rem; /* Testo leggermente più piccolo per non andare a capo */
+        font-weight: 700;
+    }
+
+    .btn-team img {
+        width: 24px; /* Loghi leggermente più grandi rispetto a prima */
+        height: 24px;
+    }
+
+    .vs-separator {
+        font-size: 0.6rem;
+        min-width: 15px; /* Evitiamo che i bottoni si schiaccino troppo */
+    }
+}
