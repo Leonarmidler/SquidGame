@@ -21,10 +21,11 @@ header {
     margin-bottom: 20px;
 }
 
-ul, ol {
-  padding-left: 0;
-  margin-left: 0;
-  list-style: none;
+ul,
+ol {
+    padding-left: 0;
+    margin-left: 0;
+    list-style: none;
 }
 
 h1 {
@@ -50,7 +51,7 @@ h1 {
 
 .loading-bar {
     width: 200px;
-    height: 4px;
+    max-height: 4px;
     background: #ddd;
     margin: 10px auto;
     border-radius: 2px;
@@ -59,7 +60,7 @@ h1 {
 
 .loading-progress {
     width: 0%;
-    height: 100%;
+    max-height: 100%;
     background: var(--serie-a-cyan);
     transition: width 0.3s;
 }
@@ -135,8 +136,8 @@ details.pre-selection[open] summary::after {
 
 .btn-mini img,
 .btn-mini .fallback-avatar {
-    width: 30px;
-    height: 30px;
+    max-width: 30px;
+    max-height: 30px;
 }
 
 .giornata-container {
@@ -219,15 +220,15 @@ details.pre-selection[open] summary::after {
 }
 
 .btn-team img {
-    width: 30px;
-    height: 30px;
+    max-width: 30px;
+    max-height: 30px;
     object-fit: contain;
     flex-shrink: 0;
 }
 
 .fallback-avatar {
-    width: 30px;
-    height: 30px;
+    max-width: 30px;
+    max-height: 30px;
     flex-shrink: 0;
     background-color: #e0e4e8;
     color: #555;
@@ -365,8 +366,8 @@ details.pre-selection[open] summary::after {
 
 .summary-logo,
 .summary-fallback {
-    width: 24px;
-    height: 24px;
+    max-width: 24px;
+    max-height: 24px;
     object-fit: contain;
 }
 
@@ -424,15 +425,16 @@ details.pre-selection[open] summary::after {
     }
 
     .summary-logo {
-        width: 20px;
-        height: 20px;
+        max-width: 20px;
+        max-height: 20px;
     }
 }
 
 /* --- OTTIMIZZAZIONE MOBILE --- */
 @media (max-width: 480px) {
     body {
-        padding: 10px; /* Più spazio ai bordi dello schermo */
+        padding: 10px;
+        /* Più spazio ai bordi dello schermo */
     }
 
     h1 {
@@ -441,33 +443,41 @@ details.pre-selection[open] summary::after {
     }
 
     .giornata-container {
-        padding: 12px 8px; /* Riduciamo i margini laterali interni */
+        padding: 12px 8px;
+        /* Riduciamo i margini laterali interni */
         margin-bottom: 15px;
     }
 
     .match-row {
-        gap: 5px; /* Spazio minimo tra i due bottoni */
-        padding: 6px 0; /* Aumentiamo lo spazio verticale tra le partite */
+        gap: 5px;
+        /* Spazio minimo tra i due bottoni */
+        padding: 6px 0;
+        /* Aumentiamo lo spazio verticale tra le partite */
     }
 
     .btn-team {
-        padding: 12px 8px; /* Rendiamo il bottone più alto (più facile da tappare) */
+        padding: 12px 8px;
+        /* Rendiamo il bottone più alto (più facile da tappare) */
         gap: 6px;
-        border-radius: 12px; /* Angoli più morbidi */
+        border-radius: 12px;
+        /* Angoli più morbidi */
     }
 
     .btn-team span {
-        font-size: 0.75rem; /* Testo leggermente più piccolo per non andare a capo */
+        font-size: 0.75rem;
+        /* Testo leggermente più piccolo per non andare a capo */
         font-weight: 700;
     }
 
     .btn-team img {
-        width: 24px; /* Loghi leggermente più grandi rispetto a prima */
-        height: 24px;
+        width: 24px;
+        /* Loghi leggermente più grandi rispetto a prima */
+        max-height: 24px;
     }
 
     .vs-separator {
         font-size: 0.6rem;
-        min-width: 15px; /* Evitiamo che i bottoni si schiaccino troppo */
+        min-width: 15px;
+        /* Evitiamo che i bottoni si schiaccino troppo */
     }
 }
