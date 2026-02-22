@@ -15,10 +15,10 @@ async function caricaDatiReali() {
     try {
         // 1. Rimuoviamo "?status=SCHEDULED" per scaricare TUTTO il calendario
         const targetUrl = `https://api.football-data.org/v4/competitions/${COMPETITION_ID}/matches`;
-        const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
+        const proxyUrl = "https://corsproxy.org/?" + encodeURIComponent(targetUrl);
         const response = await fetch(proxyUrl, { headers: { 'X-Auth-Token': API_TOKEN } });
         const data = await response.json();
-        
+
         partiteReali = data.matches.map(match => ({
             id: match.id,
             matchday: match.matchday,
@@ -26,7 +26,7 @@ async function caricaDatiReali() {
             homeTeam: { id: match.homeTeam.id, name: match.homeTeam.shortName || match.homeTeam.name, crest: match.homeTeam.crest },
             awayTeam: { id: match.awayTeam.id, name: match.awayTeam.shortName || match.awayTeam.name, crest: match.awayTeam.crest }
         }));
-        
+
         await preparaCacheImmagini(partiteReali);
     } catch (error) {
         document.getElementById('loading').innerHTML = `Errore Caricamento 😢`;
@@ -35,30 +35,30 @@ async function caricaDatiReali() {
 
 function avviaApp() {
     partitePerGiornata = raggruppaPerGiornata(partiteReali);
-    
+
     // 3. Filtriamo le giornate prima di mostrarle
     giornateTotali = Object.keys(partitePerGiornata)
         .sort((a, b) => a - b)
         .filter(giornata => {
             const matches = partitePerGiornata[giornata];
-            
+
             // Controlla se in questa giornata c'è ALMENO UNA partita 
             // Finita (FINISHED), In Corso (IN_PLAY) o in Pausa (PAUSED)
-            const giornataIniziata = matches.some(m => 
-                m.status === 'FINISHED' || 
-                m.status === 'IN_PLAY' || 
+            const giornataIniziata = matches.some(m =>
+                m.status === 'FINISHED' ||
+                m.status === 'IN_PLAY' ||
                 m.status === 'PAUSED'
             );
-            
+
             // Se la giornata è iniziata o già passata, la escludiamo (return false)
-            return !giornataIniziata; 
+            return !giornataIniziata;
         });
 
     document.getElementById('loading').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
-    
+
     renderPreSelectionGrid();
-    
+
     // 4. Carichiamo la prima giornata disponibile (che sarà quella non ancora iniziata)
     caricaAltraGiornata(BATCH_SIZE);
 }
@@ -75,7 +75,7 @@ async function preparaCacheImmagini(partite) {
 
     await Promise.all(teamsArray.map(async (team) => {
         try {
-            const proxyImgUrl = "https://corsproxy.io/?" + encodeURIComponent(team.crest);
+            const proxyImgUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(team.crest);
             const resp = await fetch(proxyImgUrl);
             const blob = await resp.blob();
             const base64Data = await new Promise((resolve) => {
