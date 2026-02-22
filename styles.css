@@ -386,9 +386,8 @@ details.pre-selection[open] summary::after {
 }
 
 .watermark {
-    margin: 25px;
     text-align: center;
-    font-size: 0.55rem;
+    font-size: 0.4rem;
     color: #999;
     text-transform: uppercase;
     letter-spacing: 2px;
