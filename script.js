@@ -81,25 +81,16 @@ async function preparaCacheImmagini(partite) {
             const proxyImgUrl = "https://corsproxy.io/?" + encodeURIComponent(team.crest);
             
             const resp = await fetch(proxyImgUrl);
-            if (!resp.ok) throw new Error("Errore fetch immagine per " + team.name);
-            
             const blob = await resp.blob();
-            
-            // TRUCCHETTO: Se l'immagine è un SVG ma il proxy ha perso il tipo MIME, lo forziamo noi
-            let validBlob = blob;
-            if (team.crest.includes('.svg') && !blob.type.includes('svg')) {
-                validBlob = new Blob([blob], { type: 'image/svg+xml' });
-            }
 
             const base64Data = await new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(validBlob);
+                reader.readAsDataURL(blob);
             });
             
             teamCache[team.id] = { id: team.id, name: team.name, logoData: base64Data, isBase64: true };
         } catch (e) {
-            console.error("Non sono riuscito a caricare il logo di: " + team.name);
             teamCache[team.id] = { id: team.id, name: team.name, logoData: null, isBase64: false };
         } finally {
             loaded++;
