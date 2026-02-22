@@ -75,12 +75,17 @@ async function preparaCacheImmagini(partite) {
     const total = teamsArray.length;
     let loaded = 0;
 
+    // INSERISCI QUI IL TUO INDIRIZZO CLOUDFLARE
+    const CLOUDFLARE_URL = "https://squid-calcio.danieleleonardo98.workers.dev";
+
     await Promise.all(teamsArray.map(async (team) => {
         try {
-            // Torniamo al vecchio e affidabile corsproxy.io SOLO per i loghi (qui non c'è token, quindi non si blocca)
-            const proxyImgUrl = "https://corsproxy.io/?" + encodeURIComponent(team.crest);
+            // Chiamiamo Cloudflare passandogli l'URL dell'immagine
+            const proxyImgUrl = `${CLOUDFLARE_URL}/?url=${encodeURIComponent(team.crest)}`;
             
             const resp = await fetch(proxyImgUrl);
+            if (!resp.ok) throw new Error("Errore fetch immagine per " + team.name);
+            
             const blob = await resp.blob();
 
             const base64Data = await new Promise((resolve) => {
@@ -91,6 +96,7 @@ async function preparaCacheImmagini(partite) {
             
             teamCache[team.id] = { id: team.id, name: team.name, logoData: base64Data, isBase64: true };
         } catch (e) {
+            console.error("Non sono riuscito a caricare il logo di: " + team.name);
             teamCache[team.id] = { id: team.id, name: team.name, logoData: null, isBase64: false };
         } finally {
             loaded++;
