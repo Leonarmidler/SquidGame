@@ -13,23 +13,25 @@ let squadreUsateGlobalmente = new Set();
 
 async function caricaDatiReali() {
     try {
-        // 1. Rimuoviamo "?status=SCHEDULED" per scaricare TUTTO il calendario
-        const targetUrl = `https://api.football-data.org/v4/competitions/${COMPETITION_ID}/matches`;
-        const proxyUrl = "https://corsproxy.org/?" + encodeURIComponent(targetUrl);
-        const response = await fetch(proxyUrl, { headers: { 'X-Auth-Token': API_TOKEN } });
+        // Inserisci qui l'URL esatto che ti ha generato Cloudflare
+        const targetUrl = `https://squid-calcio.danieleleonardo98.workers.dev`; 
+        
+        // Guarda che pulizia: nessuna intestazione, nessun token, nessun proxy esterno!
+        const response = await fetch(targetUrl);
         const data = await response.json();
-
+        
         partiteReali = data.matches.map(match => ({
             id: match.id,
             matchday: match.matchday,
-            status: match.status, // 2. Salviamo lo stato della partita!
+            status: match.status,
             homeTeam: { id: match.homeTeam.id, name: match.homeTeam.shortName || match.homeTeam.name, crest: match.homeTeam.crest },
             awayTeam: { id: match.awayTeam.id, name: match.awayTeam.shortName || match.awayTeam.name, crest: match.awayTeam.crest }
         }));
-
+        
         await preparaCacheImmagini(partiteReali);
     } catch (error) {
         document.getElementById('loading').innerHTML = `Errore Caricamento 😢`;
+        console.error(error);
     }
 }
 
