@@ -331,10 +331,8 @@ details.pre-selection[open] summary::after {
 }
 
 .summary-badge {
-    background: #eee;
     color: #666;
     padding: 4px;
-    border-radius: 6px;
     font-size: 0.75rem;
     font-weight: 700;
     text-align: center;
@@ -421,93 +419,91 @@ details.pre-selection[open] summary::after {
 /* --- OTTIMIZZAZIONE MOBILE (Layout Ingrandito e Comodo) --- */
 @media (max-width: 768px) {
     body {
-        padding: 10px 5px; /* Sfruttiamo quasi tutto lo schermo in larghezza */
+        padding: 12px 8px; /* Diamo più spazio orizzontale possibile */
     }
 
     h1 {
-        font-size: 2.2rem; /* Titolo molto più grande e visibile */
+        font-size: 2rem; /* Titolo bello grande */
         margin-bottom: 5px;
     }
 
     .subtitle {
-        font-size: 1.1rem; /* Sottotitolo più leggibile */
-        margin-bottom: 20px;
+        font-size: 1.1rem;
+        margin-bottom: 25px;
     }
 
     .giornata-container {
-        padding: 15px 10px;
+        padding: 15px 10px; /* Più spazio dentro i blocchi bianchi */
         margin-bottom: 20px;
-        border-radius: 12px;
     }
 
     .giornata-badge {
-        font-size: 0.95rem; /* Etichetta giornata più grande */
+        font-size: 0.95rem; /* Etichetta più leggibile */
         padding: 8px 25px;
     }
 
     .match-row {
-        gap: 6px; 
-        padding: 8px 0; 
+        gap: 8px;
+        padding: 10px 0; /* Distanziamo di più le partite tra loro */
     }
 
-    /* BOTTONI SQUADRE GIGANTI E COMODI */
+    /* --- BOTTONI GIGANTI --- */
     .btn-team {
-        padding: 16px 12px; /* Aumentiamo molto l'altezza del bottone per il pollice */
+        padding: 16px 10px; /* Questo rende il bottone ALTO e facile da cliccare */
         gap: 10px;
-        border-radius: 14px; 
+        border-radius: 12px;
     }
 
     .btn-team span {
-        font-size: 1rem; /* Testo grande e leggibile, non più minuscolo! */
+        font-size: 1.05rem; /* Testo bello leggibile (prima era 0.75rem!) */
         font-weight: 700;
     }
 
     .btn-team img, 
     .fallback-avatar {
-        width: 32px; /* Loghi belli grandi */
-        height: 32px;
-        max-width: 32px;
-        max-height: 32px;
-        font-size: 0.8rem; /* Lettere più grandi se manca il logo */
+        max-width: 36px; /* Loghi molto più grandi */
+        max-height: 36px;
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem; /* Testo di fallback più grande */
     }
 
     .vs-separator {
-        font-size: 0.8rem;
-        min-width: 25px; /* Spazio giusto per far respirare i due bottoni */
+        font-size: 0.9rem;
+        min-width: 25px;
     }
 
-    /* ACCORDION SQUADRE USATE */
+    /* --- MENU SQUADRE USATE --- */
     details.pre-selection summary {
         font-size: 1.1rem;
-        padding: 18px 15px; /* Tasto per aprire il menu molto più alto */
+        padding: 20px 15px; /* Tasto apertura più grande */
     }
-    
+
     .btn-mini {
         padding: 12px 8px;
         font-size: 0.85rem;
+        gap: 8px;
     }
 
     .btn-mini img, 
     .btn-mini .fallback-avatar {
-        width: 36px;
-        height: 36px;
-        max-width: 36px;
-        max-height: 36px;
+        max-width: 38px;
+        max-height: 38px;
+        width: 38px;
+        height: 38px;
     }
 
-    /* RIEPILOGO FINALE */
+    /* --- RIEPILOGO FINALE --- */
     .summary-item {
-        font-size: 1rem;
+        font-size: 1rem; /* Nomi squadre esportazione grandi */
         gap: 8px;
     }
-    
-    .summary-badge, .summary-spacer {
-        font-size: 0.85rem;
-        padding: 6px 0;
-    }
 
-    .summary-logo {
+    .summary-logo,
+    .summary-fallback {
         max-width: 28px;
         max-height: 28px;
+        width: 28px;
+        height: 28px;
     }
 }
