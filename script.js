@@ -77,22 +77,36 @@ async function preparaCacheImmagini(partite) {
 
     await Promise.all(teamsArray.map(async (team) => {
         try {
-            const proxyImgUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(team.crest);
+            // Torniamo al vecchio e affidabile corsproxy.io SOLO per i loghi (qui non c'è token, quindi non si blocca)
+            const proxyImgUrl = "https://corsproxy.io/?" + encodeURIComponent(team.crest);
+            
             const resp = await fetch(proxyImgUrl);
+            if (!resp.ok) throw new Error("Errore fetch immagine per " + team.name);
+            
             const blob = await resp.blob();
+            
+            // TRUCCHETTO: Se l'immagine è un SVG ma il proxy ha perso il tipo MIME, lo forziamo noi
+            let validBlob = blob;
+            if (team.crest.includes('.svg') && !blob.type.includes('svg')) {
+                validBlob = new Blob([blob], { type: 'image/svg+xml' });
+            }
+
             const base64Data = await new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(blob);
+                reader.readAsDataURL(validBlob);
             });
+            
             teamCache[team.id] = { id: team.id, name: team.name, logoData: base64Data, isBase64: true };
         } catch (e) {
+            console.error("Non sono riuscito a caricare il logo di: " + team.name);
             teamCache[team.id] = { id: team.id, name: team.name, logoData: null, isBase64: false };
         } finally {
             loaded++;
             document.getElementById('progressBar').style.width = `${(loaded / total) * 100}%`;
         }
     }));
+    
     avviaApp();
 }
 

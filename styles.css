@@ -416,94 +416,80 @@ details.pre-selection[open] summary::after {
     outline: none;
 }
 
-/* --- OTTIMIZZAZIONE MOBILE (Layout Ingrandito e Comodo) --- */
-@media (max-width: 768px) {
+/* --- OTTIMIZZAZIONE MOBILE STANDARD --- */
+@media (max-width: 600px) {
     body {
-        padding: 12px 8px; /* Diamo più spazio orizzontale possibile */
+        padding: 10px;
     }
 
     h1 {
-        font-size: 2rem; /* Titolo bello grande */
-        margin-bottom: 5px;
-    }
-
-    .subtitle {
-        font-size: 1.1rem;
-        margin-bottom: 25px;
+        font-size: 1.6rem;
+        margin-bottom: 10px;
     }
 
     .giornata-container {
-        padding: 15px 10px; /* Più spazio dentro i blocchi bianchi */
-        margin-bottom: 20px;
-    }
-
-    .giornata-badge {
-        font-size: 0.95rem; /* Etichetta più leggibile */
-        padding: 8px 25px;
+        padding: 15px 10px;
+        margin-bottom: 15px;
     }
 
     .match-row {
-        gap: 8px;
-        padding: 10px 0; /* Distanziamo di più le partite tra loro */
+        gap: 5px;
+        padding: 6px 0;
     }
 
-    /* --- BOTTONI GIGANTI --- */
+    /* Bottoni proporzionati ma comodi per il tocco */
     .btn-team {
-        padding: 16px 10px; /* Questo rende il bottone ALTO e facile da cliccare */
-        gap: 10px;
-        border-radius: 12px;
+        padding: 12px 10px;
+        gap: 8px;
+        border-radius: 10px;
     }
 
     .btn-team span {
-        font-size: 1.05rem; /* Testo bello leggibile (prima era 0.75rem!) */
-        font-weight: 700;
+        font-size: 0.85rem; 
+        font-weight: 600;
     }
 
     .btn-team img, 
     .fallback-avatar {
-        max-width: 36px; /* Loghi molto più grandi */
-        max-height: 36px;
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem; /* Testo di fallback più grande */
+        width: 28px;
+        height: 28px;
+        max-width: 28px;
+        max-height: 28px;
+        font-size: 0.75rem;
+        flex-shrink: 0;
     }
 
     .vs-separator {
-        font-size: 0.9rem;
-        min-width: 25px;
+        font-size: 0.75rem;
+        min-width: 20px;
     }
 
-    /* --- MENU SQUADRE USATE --- */
+    /* Menu Squadre */
     details.pre-selection summary {
-        font-size: 1.1rem;
-        padding: 20px 15px; /* Tasto apertura più grande */
+        font-size: 1rem;
+        padding: 15px;
     }
 
     .btn-mini {
-        padding: 12px 8px;
-        font-size: 0.85rem;
-        gap: 8px;
+        padding: 10px 8px;
+        font-size: 0.75rem;
     }
 
     .btn-mini img, 
     .btn-mini .fallback-avatar {
-        max-width: 38px;
-        max-height: 38px;
-        width: 38px;
-        height: 38px;
+        width: 30px;
+        height: 30px;
     }
 
-    /* --- RIEPILOGO FINALE --- */
+    /* Riepilogo */
     .summary-item {
-        font-size: 1rem; /* Nomi squadre esportazione grandi */
-        gap: 8px;
+        font-size: 0.85rem;
+        gap: 5px;
     }
 
     .summary-logo,
     .summary-fallback {
-        max-width: 28px;
-        max-height: 28px;
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
     }
 }
