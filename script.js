@@ -5,7 +5,7 @@ let partiteReali = [];
 let partitePerGiornata = {};
 let giornateTotali = [];
 let giornateCaricate = 0;
-const BATCH_SIZE = 3;
+const BATCH_SIZE = 1;
 const teamCache = {};
 let sceltePerGiornata = {};
 let squadreGiaUsate = new Set();
@@ -13,20 +13,54 @@ let squadreUsateGlobalmente = new Set();
 
 async function caricaDatiReali() {
     try {
-        const targetUrl = `https://api.football-data.org/v4/competitions/${COMPETITION_ID}/matches?status=SCHEDULED`;
+        // 1. Rimuoviamo "?status=SCHEDULED" per scaricare TUTTO il calendario
+        const targetUrl = `https://api.football-data.org/v4/competitions/${COMPETITION_ID}/matches`;
         const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
         const response = await fetch(proxyUrl, { headers: { 'X-Auth-Token': API_TOKEN } });
         const data = await response.json();
+        
         partiteReali = data.matches.map(match => ({
             id: match.id,
             matchday: match.matchday,
+            status: match.status, // 2. Salviamo lo stato della partita!
             homeTeam: { id: match.homeTeam.id, name: match.homeTeam.shortName || match.homeTeam.name, crest: match.homeTeam.crest },
             awayTeam: { id: match.awayTeam.id, name: match.awayTeam.shortName || match.awayTeam.name, crest: match.awayTeam.crest }
         }));
+        
         await preparaCacheImmagini(partiteReali);
     } catch (error) {
         document.getElementById('loading').innerHTML = `Errore Caricamento 😢`;
     }
+}
+
+function avviaApp() {
+    partitePerGiornata = raggruppaPerGiornata(partiteReali);
+    
+    // 3. Filtriamo le giornate prima di mostrarle
+    giornateTotali = Object.keys(partitePerGiornata)
+        .sort((a, b) => a - b)
+        .filter(giornata => {
+            const matches = partitePerGiornata[giornata];
+            
+            // Controlla se in questa giornata c'è ALMENO UNA partita 
+            // Finita (FINISHED), In Corso (IN_PLAY) o in Pausa (PAUSED)
+            const giornataIniziata = matches.some(m => 
+                m.status === 'FINISHED' || 
+                m.status === 'IN_PLAY' || 
+                m.status === 'PAUSED'
+            );
+            
+            // Se la giornata è iniziata o già passata, la escludiamo (return false)
+            return !giornataIniziata; 
+        });
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    
+    renderPreSelectionGrid();
+    
+    // 4. Carichiamo la prima giornata disponibile (che sarà quella non ancora iniziata)
+    caricaAltraGiornata(BATCH_SIZE);
 }
 
 async function preparaCacheImmagini(partite) {
@@ -60,6 +94,7 @@ async function preparaCacheImmagini(partite) {
     avviaApp();
 }
 
+/*
 function avviaApp() {
     partitePerGiornata = raggruppaPerGiornata(partiteReali);
     giornateTotali = Object.keys(partitePerGiornata).sort((a, b) => a - b);
@@ -68,6 +103,7 @@ function avviaApp() {
     renderPreSelectionGrid();
     caricaAltraGiornata(BATCH_SIZE);
 }
+*/
 
 function gestioneClickSquadra(teamId, matchday, btnElement) {
     // Feedback immediato
@@ -301,7 +337,7 @@ function scaricaImmagine() {
     btn.disabled = true;
     html2canvas(elemento, { backgroundColor: "#ffffff", scale: 2 }).then(canvas => {
         const link = document.createElement('a');
-        link.download = 'SquidSerieA_Scelte.png';
+        link.download = 'SquidCalcio_Scelte.png';
         link.href = canvas.toDataURL("image/png");
         link.click();
         btn.disabled = false;
@@ -338,7 +374,7 @@ async function condividiImmagine() {
             }
 
             // 3. Crea un vero file PNG
-            const file = new File([blob], 'MioSquidSerieA.png', { type: 'image/png' });
+            const file = new File([blob], 'SquidCalcio_Scelte.png', { type: 'image/png' });
 
             // 4. Verifica se il file è "condivisibile"
             if (navigator.canShare({ files: [file] })) {
