@@ -13,10 +13,8 @@ let squadreUsateGlobalmente = new Set();
 
 async function caricaDatiReali() {
     try {
-        // Inserisci qui l'URL esatto che ti ha generato Cloudflare
         const targetUrl = `https://squid-calcio.danieleleonardo98.workers.dev`; 
         
-        // Guarda che pulizia: nessuna intestazione, nessun token, nessun proxy esterno!
         const response = await fetch(targetUrl);
         const data = await response.json();
         
@@ -38,7 +36,6 @@ async function caricaDatiReali() {
 function avviaApp() {
     partitePerGiornata = raggruppaPerGiornata(partiteReali);
 
-    // 3. Filtriamo le giornate prima di mostrarle
     giornateTotali = Object.keys(partitePerGiornata)
         .sort((a, b) => a - b)
         .filter(giornata => {
@@ -61,7 +58,6 @@ function avviaApp() {
 
     renderPreSelectionGrid();
 
-    // 4. Carichiamo la prima giornata disponibile (che sarà quella non ancora iniziata)
     caricaAltraGiornata(BATCH_SIZE);
 }
 
@@ -75,12 +71,10 @@ async function preparaCacheImmagini(partite) {
     const total = teamsArray.length;
     let loaded = 0;
 
-    // INSERISCI QUI IL TUO INDIRIZZO CLOUDFLARE
     const CLOUDFLARE_URL = "https://squid-calcio.danieleleonardo98.workers.dev";
 
     await Promise.all(teamsArray.map(async (team) => {
         try {
-            // Chiamiamo Cloudflare passandogli l'URL dell'immagine
             const proxyImgUrl = `${CLOUDFLARE_URL}/?url=${encodeURIComponent(team.crest)}`;
             
             const resp = await fetch(proxyImgUrl);
@@ -107,17 +101,6 @@ async function preparaCacheImmagini(partite) {
     avviaApp();
 }
 
-/*
-function avviaApp() {
-    partitePerGiornata = raggruppaPerGiornata(partiteReali);
-    giornateTotali = Object.keys(partitePerGiornata).sort((a, b) => a - b);
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('mainContent').style.display = 'block';
-    renderPreSelectionGrid();
-    caricaAltraGiornata(BATCH_SIZE);
-}
-*/
-
 function gestioneClickSquadra(teamId, matchday, btnElement) {
     // Feedback immediato
     const parentRow = btnElement.closest('.match-row');
@@ -128,7 +111,6 @@ function gestioneClickSquadra(teamId, matchday, btnElement) {
     if (!wasSelected) btnElement.classList.add('selected');
     else btnElement.classList.remove('selected');
 
-    // Calcolo logico
     setTimeout(() => {
         if (sceltePerGiornata[matchday] === teamId) delete sceltePerGiornata[matchday];
         else sceltePerGiornata[matchday] = teamId;
@@ -173,13 +155,13 @@ function costruisciHTMLGiornata(giornata, matches) {
         row.className = 'match-row';
 
         // Bottone Home
-        const btnHome = creaBottoneDOM(match.homeTeam.id, match.matchday);
+        const btnHome = creaBottoneDOM(match.homeTeam.id, match.matchday, true);
         // VS
         const vs = document.createElement('span');
         vs.className = 'vs-separator';
         vs.innerText = 'vs';
         // Bottone Away
-        const btnAway = creaBottoneDOM(match.awayTeam.id, match.matchday);
+        const btnAway = creaBottoneDOM(match.awayTeam.id, match.matchday, false);
 
         row.appendChild(btnHome);
         row.appendChild(vs);
@@ -189,7 +171,7 @@ function costruisciHTMLGiornata(giornata, matches) {
     return container;
 }
 
-function creaBottoneDOM(teamId, matchday) {
+function creaBottoneDOM(teamId, matchday, isHome = true) {
     const teamData = teamCache[teamId];
     const btn = document.createElement('button');
     btn.className = 'btn-team';
@@ -211,6 +193,8 @@ function creaBottoneDOM(teamId, matchday) {
 
     const nameSpan = document.createElement('span');
     nameSpan.innerText = teamData.name;
+
+    btn.classList.toggle('home', isHome);
     btn.appendChild(nameSpan);
 
     btn.onclick = (e) => gestioneClickSquadra(teamId, matchday, e.currentTarget);
@@ -362,7 +346,6 @@ async function condividiImmagine() {
     const btn = document.getElementById('btnShare');
     const originalText = btn.innerHTML;
 
-    // Controllo se il browser supporta la condivisione di file
     if (!navigator.canShare || !navigator.share) {
         alert("Il tuo browser non supporta la condivisione diretta. Usa il tasto 'Salva'.");
         return;
@@ -372,24 +355,24 @@ async function condividiImmagine() {
     btn.disabled = true;
 
     try {
-        // 1. Genera il canvas
+        // Genera il canvas
         const canvas = await html2canvas(elemento, {
             backgroundColor: "#ffffff",
             scale: 2,
             useCORS: true
         });
 
-        // 2. Trasforma il canvas in un Blob (dati binari)
+        // Trasforma il canvas in un Blob (dati binari)
         canvas.toBlob(async (blob) => {
             if (!blob) {
                 alert("Errore nella creazione dell'immagine.");
                 return;
             }
 
-            // 3. Crea un vero file PNG
+            // Crea il file PNG
             const file = new File([blob], 'SquidCalcio_Scelte.png', { type: 'image/png' });
 
-            // 4. Verifica se il file è "condivisibile"
+            // Verifica se il file è condivisibile
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({
                     files: [file],

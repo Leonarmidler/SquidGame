@@ -208,6 +208,10 @@ details.pre-selection[open] summary::after {
     user-select: none;
 }
 
+.home {
+    flex-direction: row-reverse;
+}
+
 .btn-team:active:not(:disabled) {
     transform: scale(0.98);
 }
@@ -415,7 +419,6 @@ details.pre-selection[open] summary::after {
     outline: none;
 }
 
-/* --- OTTIMIZZAZIONE MOBILE STANDARD --- */
 @media (max-width: 600px) {
     body {
         padding: 10px;
@@ -436,7 +439,6 @@ details.pre-selection[open] summary::after {
         padding: 6px 0;
     }
 
-    /* Bottoni proporzionati ma comodi per il tocco */
     .btn-team {
         padding: 12px 10px;
         gap: 8px;
