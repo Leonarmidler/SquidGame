@@ -7,6 +7,49 @@
     --danger-color: #FF4B4B;
 }
 
+.top-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.85); /* 85% bianco */
+    backdrop-filter: blur(10px); /* Sfocatura per i contenuti sotto */
+    -webkit-backdrop-filter: blur(10px); /* Per Safari/iOS */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Sta sempre sopra a tutto */
+    box-shadow: 0 4px 15px rgba(0, 65, 155, 0.05); /* Ombra leggerissima blu */
+    border-bottom: 1px solid rgba(224, 228, 232, 0.6);
+}
+
+.banner-title {
+    color: var(--serie-a-blue);
+    font-weight: 900;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+}
+
+.hamburger-btn {
+    position: absolute;
+    right: 15px; /* Lo fissa sulla destra */
+    background: none;
+    border: none;
+    color: var(--serie-a-blue);
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hamburger-btn:active {
+    transform: scale(0.9);
+}
+
 body {
     font-family: 'Montserrat', sans-serif;
     background-color: var(--bg-color);
@@ -417,6 +460,225 @@ details.pre-selection[open] summary::after {
     font-weight: 700;
     cursor: pointer;
     outline: none;
+}
+
+/* --- SIDE MENU (Stile Serie A) --- */
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 300px; /* Leggermente più largo */
+    height: 100%;
+    /* Sfondo grigio chiaro pulito come nell'immagine */
+    background: #fafbfc; 
+    z-index: 1002;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.side-menu.active {
+    right: 0;
+}
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px; /* Più spazio */
+    /* Nessuno sfondo diverso, solo una linea separatrice */
+    border-bottom: 2px solid #e0e4e8; 
+}
+
+.menu-header h2 {
+    margin: 0;
+    color: var(--serie-a-blue);
+    font-size: 1.3rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 5px;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.menu-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.menu-content {
+    padding: 0; /* Rimuoviamo il padding generale */
+    display: flex;
+    flex-direction: column;
+    gap: 0; /* Nessuno spazio tra gli elementi */
+}
+
+.menu-item {
+    background: none;
+    border: none;
+    /* Linea separatrice sottile in basso */
+    border-bottom: 1px solid #e0e4e8;
+    padding: 20px; /* Spazio generoso per il tocco */
+    border-radius: 0;
+    text-align: left;
+    width: 100%;
+    
+    /* Tipografia stile immagine */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--serie-a-blue);
+    
+    cursor: pointer;
+    transition: color 0.2s, padding-left 0.2s;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.menu-item:hover, .menu-item:active {
+    background: transparent;
+    /* Colore di accento al passaggio del mouse */
+    color: var(--serie-a-cyan); 
+    padding-left: 25px; /* Leggero movimento per feedback */
+}
+
+/* --- ACCORDION NEL MENU LATERALE --- */
+details.menu-accordion {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+details.menu-accordion summary {
+    padding: 15px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    list-style: none; /* Rimuove la freccetta standard */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Fix per rimuovere la freccia standard sui vecchi browser (Safari) */
+details.menu-accordion summary::-webkit-details-marker {
+    display: none; 
+}
+
+/* La nostra freccia personalizzata */
+details.menu-accordion summary::after {
+    content: '▼';
+    font-size: 0.7rem;
+    color: var(--serie-a-blue);
+    transition: transform 0.3s ease;
+}
+
+/* Quando il menu è aperto, la freccia ruota verso l'alto */
+details.menu-accordion[open] summary::after {
+    transform: rotate(180deg);
+}
+
+/* Colore di sfondo quando il menu è aperto */
+details.menu-accordion[open] summary {
+    background-color: #f0f4f8;
+    color: var(--serie-a-blue);
+    border-bottom: 1px solid #ddd;
+}
+
+/* Contenitore interno della classifica */
+.accordion-content {
+    padding: 15px;
+    background-color: #fafbfc;
+    font-size: 0.85rem;
+    max-height: 400px;
+    overflow-y: auto; /* Permette di scorrere la classifica se è molto lunga */
+}
+
+/* --- CLASSIFICA COMPATTA (TABELLA) --- */
+.classifica-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem; /* Font leggermente più piccolo per far stare tutto */
+}
+
+.classifica-table td {
+    padding: 5px 2px; /* Margini ridotti all'osso */
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+.classifica-table tr:last-child td {
+    border-bottom: none;
+}
+
+.class-pos {
+    width: 25px;
+    font-weight: 700;
+    color: #999;
+    text-align: right;
+    padding-right: 5px !important;
+}
+
+.class-logo {
+    width: 22px;
+    text-align: center;
+}
+
+.class-logo img, 
+.class-logo .summary-fallback {
+    width: 18px !important;
+    height: 18px !important;
+    object-fit: contain;
+    font-size: 0.55rem;
+    margin: 0 auto;
+}
+
+.class-name {
+    font-weight: 600;
+    color: var(--text-color);
+    padding-left: 5px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px; /* Evita che nomi lunghi spacchino la riga */
+}
+
+.class-pts {
+    font-weight: 900;
+    color: var(--serie-a-blue);
+    text-align: right;
+    width: 30px;
+}
+
+/* --- EFFETTO ZEBRA PER LA CLASSIFICA (Righe alternate) --- */
+.classifica-table tr:nth-child(even) {
+    /* Il tuo blu (#00419B) che in RGB è 0, 65, 155 con 10% di opacità */
+    background-color: rgba(0, 65, 155, 0.1);
+}
+
+/* Opzionale: un leggero effetto hover quando l'utente tocca una riga */
+.classifica-table tr:hover {
+    background-color: rgba(0, 215, 201, 0.15); /* Il tuo azzurro/ciano al 15% */
+    transition: background-color 0.2s ease;
 }
 
 @media (max-width: 600px) {

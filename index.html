@@ -2,23 +2,45 @@
 <html lang="it">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>SQUID SERIE A</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="https://leonarmidler.github.io/SquidGame/icon.ico" type="image/x-icon">
-  
-  <link rel="stylesheet" href="styles.css?v=5">
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SQUID SERIE A</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://leonarmidler.github.io/SquidGame/icon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="styles.css?v=5">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
-
+    <nav class="top-banner">
+        <div class="banner-title">SQUIDCALCIO</div>
+        <button class="hamburger-btn" onclick="apriMenu()" aria-label="Menu">
+            <svg width="34" height="24" viewBox="0 0 34 24" fill="none" stroke="currentColor">
+                <path
+                    d="M1.2002 17.1997C0.537453 17.1997 0 17.7372 0 18.3999C0.000106812 19.0626 0.537518 19.6001 1.2002 19.6001H15.3145C15.9771 19.6001 16.5145 19.0625 16.5146 18.3999C16.5146 17.7372 15.9772 17.1997 15.3145 17.1997H1.2002ZM1.2002 10.8003C0.537453 10.8003 0 11.3377 0 12.0005C0.000106812 12.6631 0.537518 13.2007 1.2002 13.2007H32.7998C33.4625 13.2007 33.9999 12.6631 34 12.0005C34 11.3377 33.4625 10.8003 32.7998 10.8003H1.2002ZM1.2002 4.3999C0.537453 4.3999 0 4.93736 0 5.6001C0.000106812 6.26275 0.537518 6.80029 1.2002 6.80029H32.7998C33.4625 6.80029 33.9999 6.26275 34 5.6001C34 4.93736 33.4625 4.3999 32.7998 4.3999H1.2002Z"
+                    fill="currentColor">
+                </path>
+            </svg>
+            <!--    
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        -->
+        </button>
+        <div>
+        </div>
+    </nav>
+    <!--
     <header>
         <h1>Squid Serie A</h1>
         <div class="subtitle">Season Planner</div>
     </header>
+    -->
 
     <div id="loading">
         <div id="loadingText">⏳ Caricamento dati...</div>
@@ -58,6 +80,23 @@
                     <img src="png/share.png" alt="Condividi" style="width: 28px; height: 28px; object-fit: contain;">
                 </button>
             </div>
+        </div>
+    </div>
+
+    <div id="menuOverlay" class="menu-overlay" onclick="chiudiMenu()"></div>
+
+    <div id="sideMenu" class="side-menu">
+        <div class="menu-header">
+            <h2>Menu</h2>
+            <button class="close-btn" onclick="chiudiMenu()">&times;</button>
+        </div>
+        <div class="menu-content">
+            <details class="menu-accordion">
+                <summary>Classifica</summary>
+                <div class="accordion-content" id="classificaContainer">
+                    <p style="text-align: center; color: #999; font-style: italic;">In arrivo...</p>
+                </div>
+            </details>
         </div>
     </div>
 

@@ -7,15 +7,14 @@ let giornateTotali = [];
 let giornateCaricate = 0;
 const BATCH_SIZE = 1;
 const teamCache = {};
+const CLOUDFLARE_WORKER = 'https://squid-calcio.danieleleonardo98.workers.dev'
 let sceltePerGiornata = {};
 let squadreGiaUsate = new Set();
 let squadreUsateGlobalmente = new Set();
 
 async function caricaDatiReali() {
     try {
-        const targetUrl = `https://squid-calcio.danieleleonardo98.workers.dev`;
-
-        const response = await fetch(targetUrl);
+        const response = await fetch(CLOUDFLARE_WORKER);
         const data = await response.json();
 
         partiteReali = data.matches.map(match => ({
@@ -27,6 +26,7 @@ async function caricaDatiReali() {
         }));
 
         await preparaCacheImmagini(partiteReali);
+        caricaClassifica();
     } catch (error) {
         document.getElementById('loading').innerHTML = `Errore Caricamento 😢`;
         console.error(error);
@@ -71,11 +71,9 @@ async function preparaCacheImmagini(partite) {
     const total = teamsArray.length;
     let loaded = 0;
 
-    const CLOUDFLARE_URL = "https://squid-calcio.danieleleonardo98.workers.dev";
-
     await Promise.all(teamsArray.map(async (team) => {
         try {
-            const proxyImgUrl = `${CLOUDFLARE_URL}/?url=${encodeURIComponent(team.crest)}`;
+            const proxyImgUrl = `${CLOUDFLARE_WORKER}/?url=${encodeURIComponent(team.crest)}`;
 
             const resp = await fetch(proxyImgUrl);
             if (!resp.ok) throw new Error("Errore fetch immagine per " + team.name);
@@ -390,6 +388,65 @@ async function condividiImmagine() {
         alert("Errore durante la condivisione.");
         btn.innerHTML = originalText;
         btn.disabled = false;
+    }
+}
+
+function apriMenu() {
+    document.getElementById('sideMenu').classList.add('active');
+    document.getElementById('menuOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden'; // Evita che la pagina sotto scorra mentre il menu è aperto
+}
+
+function chiudiMenu() {
+    document.getElementById('sideMenu').classList.remove('active');
+    document.getElementById('menuOverlay').classList.remove('active');
+    document.body.style.overflow = ''; // Riattiva lo scroll
+}
+
+async function caricaClassifica() {
+    const container = document.getElementById('classificaContainer');
+    try {
+        const targetUrl = `${CLOUDFLARE_WORKER}/?type=standings`;
+        const response = await fetch(targetUrl);
+        const data = await response.json();
+
+        const table = data.standings[0].table;
+        
+        // Iniziamo a stampare una tabella vera e propria
+        let html = '<table class="classifica-table">';
+
+        table.forEach(row => {
+            const pos = row.position;
+            const pts = row.points;
+            const name = row.team.shortName || row.team.name;
+            const teamId = row.team.id;
+
+            // Recupero il logo dalla cache
+            let mediaHtml = '';
+            if (teamCache[teamId] && teamCache[teamId].isBase64) {
+                mediaHtml = `<img src="${teamCache[teamId].logoData}" alt="${name}">`;
+            } else {
+                const initials = name.substring(0, 2).toUpperCase();
+                mediaHtml = `<div class="summary-fallback">${initials}</div>`;
+            }
+
+            // Struttura super compatta a righe
+            html += `
+                <tr>
+                    <td class="class-pos">${pos}.</td>
+                    <td class="class-logo">${mediaHtml}</td>
+                    <td class="class-name">${name}</td>
+                    <td class="class-pts">${pts}</td>
+                </tr>
+            `;
+        });
+
+        html += '</table>';
+        container.innerHTML = html;
+
+    } catch (error) {
+        console.error("Errore caricamento classifica:", error);
+        container.innerHTML = '<p style="text-align:center; color:#FF4B4B;">Errore caricamento classifica.</p>';
     }
 }
 
