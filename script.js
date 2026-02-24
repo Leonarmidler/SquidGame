@@ -13,11 +13,11 @@ let squadreUsateGlobalmente = new Set();
 
 async function caricaDatiReali() {
     try {
-        const targetUrl = `https://squid-calcio.danieleleonardo98.workers.dev`; 
-        
+        const targetUrl = `https://squid-calcio.danieleleonardo98.workers.dev`;
+
         const response = await fetch(targetUrl);
         const data = await response.json();
-        
+
         partiteReali = data.matches.map(match => ({
             id: match.id,
             matchday: match.matchday,
@@ -25,7 +25,7 @@ async function caricaDatiReali() {
             homeTeam: { id: match.homeTeam.id, name: match.homeTeam.shortName || match.homeTeam.name, crest: match.homeTeam.crest },
             awayTeam: { id: match.awayTeam.id, name: match.awayTeam.shortName || match.awayTeam.name, crest: match.awayTeam.crest }
         }));
-        
+
         await preparaCacheImmagini(partiteReali);
     } catch (error) {
         document.getElementById('loading').innerHTML = `Errore Caricamento 😢`;
@@ -76,10 +76,10 @@ async function preparaCacheImmagini(partite) {
     await Promise.all(teamsArray.map(async (team) => {
         try {
             const proxyImgUrl = `${CLOUDFLARE_URL}/?url=${encodeURIComponent(team.crest)}`;
-            
+
             const resp = await fetch(proxyImgUrl);
             if (!resp.ok) throw new Error("Errore fetch immagine per " + team.name);
-            
+
             const blob = await resp.blob();
 
             const base64Data = await new Promise((resolve) => {
@@ -87,7 +87,7 @@ async function preparaCacheImmagini(partite) {
                 reader.onloadend = () => resolve(reader.result);
                 reader.readAsDataURL(blob);
             });
-            
+
             teamCache[team.id] = { id: team.id, name: team.name, logoData: base64Data, isBase64: true };
         } catch (e) {
             console.error("Non sono riuscito a caricare il logo di: " + team.name);
@@ -97,12 +97,11 @@ async function preparaCacheImmagini(partite) {
             document.getElementById('progressBar').style.width = `${(loaded / total) * 100}%`;
         }
     }));
-    
+
     avviaApp();
 }
 
 function gestioneClickSquadra(teamId, matchday, btnElement) {
-    // Feedback immediato
     const parentRow = btnElement.closest('.match-row');
     const oldSelected = parentRow.querySelector('.btn-team.selected');
     const wasSelected = btnElement.classList.contains('selected');
