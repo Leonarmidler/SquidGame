@@ -587,7 +587,7 @@ details.menu-accordion summary::-webkit-details-marker {
 /* La nostra freccia personalizzata */
 details.menu-accordion summary::after {
     content: '▼';
-    font-size: 0.7rem;
+    font-size: 1rem;
     color: var(--serie-a-blue);
     transition: transform 0.3s ease;
 }
@@ -608,7 +608,7 @@ details.menu-accordion[open] summary {
 .accordion-content {
     padding: 15px;
     background-color: #fafbfc;
-    font-size: 0.85rem;
+    font-size: 1rem;
     max-height: 65vh;
     overflow-y: auto; /* Permette di scorrere la classifica se è molto lunga */
 }
@@ -679,6 +679,21 @@ details.menu-accordion[open] summary {
 .classifica-table tr:hover {
     background-color: rgba(0, 215, 201, 0.15); /* Il tuo azzurro/ciano al 15% */
     transition: background-color 0.2s ease;
+}
+
+/* --- FOOTER DEL MENU (Fisso in basso) --- */
+.menu-footer {
+    flex-shrink: 0; /* Impedisce che il footer venga schiacciato se il menu sopra è lungo */
+    background: transparent;
+    border-top: 1px solid #e0e4e8; /* Mette la linea separatrice sopra il bottone */
+    width: 100%;
+}
+
+.paypal-form {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
 }
 
 @media (max-width: 600px) {
