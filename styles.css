@@ -696,6 +696,107 @@ details.menu-accordion[open] summary {
     display: flex;
 }
 
+/* ========================================= */
+/* --- CUSTOMIZZAZIONE ONBOARDING INTRO.JS --- */
+/* ========================================= */
+
+/* Sfondo scuro generale (virato sul blu scuro invece che nero puro) */
+.introjs-overlay {
+    background-color: #001432 !important; 
+    opacity: 0.85 !important;
+}
+
+/* Finestrella del testo */
+.introjs-tooltip {
+    font-family: 'Montserrat', sans-serif !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important; 
+    border: 2px solid var(--serie-a-blue) !important;
+    background-color: #ffffff !important;
+    max-width: 320px !important;
+}
+
+/* Titolo dello step */
+.introjs-tooltiptitle {
+    font-size: 1.1rem !important;
+    font-weight: 900 !important;
+    color: var(--serie-a-blue) !important;
+    text-transform: uppercase !important;
+    margin-bottom: 10px !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* Testo descrittivo */
+.introjs-tooltiptext {
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    color: var(--text-color) !important;
+    line-height: 1.5 !important;
+    padding-bottom: 10px !important;
+}
+
+/* Contenitore dei bottoni in basso */
+.introjs-tooltipbuttons {
+    border-top: 1px solid #e0e4e8 !important;
+    padding-top: 15px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+}
+
+/* Stile base dei bottoni (es. "Indietro") */
+.introjs-button {
+    background-color: #f0f4f8 !important; 
+    color: var(--serie-a-blue) !important;
+    text-shadow: none !important;
+    border: none !important;
+    border-radius: 25px !important; /* Stile a pillola */
+    padding: 10px 15px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    text-align: center;
+}
+
+.introjs-button:hover {
+    background-color: #e0e4e8 !important;
+}
+
+/* Stile specifico per il bottone "Avanti" o "Fine" (Colore primario) */
+.introjs-nextbutton, .introjs-donebutton {
+    background-color: var(--serie-a-blue) !important;
+    color: white !important;
+    flex-grow: 1 !important; /* Lo fa allargare di più rispetto a "Indietro" */
+}
+
+.introjs-nextbutton:hover, .introjs-donebutton:hover {
+    background-color: var(--serie-a-cyan) !important;
+    color: var(--serie-a-blue) !important;
+}
+
+/* Disabilita i bottoni inattivi (es. "Indietro" al primo step) */
+.introjs-disabled, .introjs-disabled:hover {
+    background-color: #f5f5f5 !important;
+    color: #bbb !important;
+    cursor: not-allowed !important;
+}
+
+/* Il riquadro "illuminato" attorno al bottone che stiamo spiegando */
+.introjs-helperLayer {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 3px solid var(--serie-a-cyan) !important; /* Bordo ciano in stile Serie A */
+    border-radius: 8px !important;
+    box-shadow: 0 0 0 1000px rgba(0, 20, 50, 0.7) !important;
+}
+
+/* Nascondiamo i pallini di navigazione che fanno disordine */
+.introjs-bullets {
+    display: none !important;
+}
+
 @media (max-width: 600px) {
     body {
         padding: 10px;

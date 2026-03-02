@@ -139,6 +139,7 @@ function aggiornaStatoVisivo() {
 function costruisciHTMLGiornata(giornata, matches) {
     const container = document.createElement('div');
     container.className = 'giornata-container';
+    container.id = 'tourGiornata'
 
     // Header
     const header = document.createElement('div');
@@ -150,6 +151,7 @@ function costruisciHTMLGiornata(giornata, matches) {
     matches.forEach(match => {
         const row = document.createElement('div');
         row.className = 'match-row';
+        row.id = 'tourPartite';
 
         // Bottone Home
         const btnHome = creaBottoneDOM(match.homeTeam.id, match.matchday, true);
@@ -411,7 +413,7 @@ async function caricaClassifica() {
         const data = await response.json();
 
         const table = data.standings[0].table;
-        
+
         // Iniziamo a stampare una tabella vera e propria
         let html = '<table class="classifica-table">';
 
@@ -450,4 +452,118 @@ async function caricaClassifica() {
     }
 }
 
+function avviaTutorial() {
+    resetScelte(true);
+    const container = document.getElementById('summaryContainer');
+    container.style.display = 'block'
+
+    const intro = introJs();
+
+    intro.setOptions({
+        nextLabel: 'Avanti ▸',
+        prevLabel: '◂ Indietro',
+        doneLabel: 'Fine',
+        showStepNumbers: false,
+        exitOnOverlayClick: false,
+        disableInteraction: true,
+
+        steps: [
+            {
+                title: 'Che cos\'è lo SquidCalcio',
+                intro: 'Il tuo obiettivo è sopravvivere il più a lungo possibile scegliendo una squadra vincente ad ogni giornata.'
+            },
+            {
+                element: document.querySelector('#tourSquadreUsate'),
+                title: 'Squadre Usate',
+                intro: 'Usa questa sezione per selezionare le squadre che hai già utilizzato nel corso di questa edizione',
+            },
+            {
+                element: document.querySelector('#tourGiornata'),
+                title: 'Fai la tua scelta',
+                intro: 'Clicca su una squadra in questa giornata. Se quella squadra vince, superi il turno!<br><br>💡 <b>Tip:</b> Se sei indeciso, usa il <b>Menu (☰)</b> in alto a destra e aiutati con la <b>CLASSIFICA</b>!'
+            },
+            {
+                element: document.querySelector('#tourCaricaAltraGiornata'),
+                title: 'Vai avanti',
+                // Testo modificato per invitare al click
+                intro: 'Utilizza questo bottone per caricare la giornata successiva'
+            },
+            {
+                element: document.querySelector('#summaryContainer'),
+                title: 'Il tuo percorso',
+                intro: 'Man mano che fai le tue scelte, qui apparirà il riepilogo.'
+            },
+            {
+                element: document.querySelector('#tourSalva'),
+                title: 'Conserva selezioni',
+                intro: 'Quando hai finito, salva le tue scelte come immagine sul dispositivo.'
+            },
+            {
+                element: document.querySelector('#tourCondividi'),
+                title: 'Condividi',
+                intro: '... oppure condividila sui social per confrontarti.'
+            },
+            {
+                title: 'Fine tutorial',
+                intro: 'È tutto! Per riguardare il tutorial clicca sul <b>Menu (☰)</b> in alto a destra e poi la voce <b>COME SI GIOCA</b>. <br><br><b>Buon divertimento!</b>'
+            }
+        ]
+    });
+
+    // Quando finisce o viene chiuso, salva nel telefono
+    intro.oncomplete(function () {
+        localStorage.setItem('tutorialCompletato', 'true');
+        chiudiMenu(); // 👈 FORZA LA CHIUSURA DEL MENU
+        container.style.display = 'none'
+    });
+
+    // Quando viene chiuso in anticipo (es. cliccando fuori o la X)
+    intro.onexit(function () {
+        localStorage.setItem('tutorialCompletato', 'true');
+        chiudiMenu(); // 👈 FORZA LA CHIUSURA DEL MENU+
+        container.style.display = 'none'
+    });
+
+    intro.start();
+}
+
+function resetScelte(isTutorial = false) {
+    let conferma;
+    // 1. Chiediamo conferma con un avviso a schermo (se dice "Annulla", la funzione si ferma qui)
+    if (!isTutorial) { conferma = confirm("⚠️ ATTENZIONE!\n\nSei sicuro di voler azzerare tutti i tuoi progressi e ricominciare da capo?\nQuesta azione non può essere annullata."); }
+    else conferma = true;
+    if (conferma) {
+        // 2. Ci salviamo in una variabile il fatto che ha già visto il tutorial
+        const tutorialFatto = localStorage.getItem('tutorialCompletato');
+
+        // 3. Svuotiamo COMPLETAMENTE la memoria del gioco
+        localStorage.clear();
+
+        // 4. Se aveva già fatto il tutorial, glielo rimettiamo in memoria (così non lo disturba più)
+        if (tutorialFatto) {
+            localStorage.setItem('tutorialCompletato', 'true');
+        }
+
+        // 5. Ricarichiamo magicamente la pagina! 
+        // Questo riporterà tutta l'interfaccia (giornata, loghi, riepilogo) allo stato iniziale senza dover scrivere 100 righe di codice per svuotare tutto.
+        if (!isTutorial) window.location.reload();
+    }
+}
+
 caricaDatiReali();
+
+// ==========================================
+// AVVIO AUTOMATICO PER I NUOVI UTENTI
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Aspettiamo mezzo secondo (500 millisecondi) per assicurarci 
+    // che l'app abbia finito di generare i bottoni e le partite a schermo
+    setTimeout(() => {
+        // Controlla la memoria del telefono: se non c'è la voce 'tutorialCompletato'...
+        if (!localStorage.getItem('tutorialCompletato')) {
+            avviaTutorial(); // ...fai partire il tour!
+        }
+    }, 500);
+
+});
