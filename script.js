@@ -552,6 +552,7 @@ function resetScelte(isTutorial = false) {
 
 caricaDatiReali();
 
+/*
 // ==========================================
 // AVVIO AUTOMATICO PER I NUOVI UTENTI
 // ==========================================
@@ -567,3 +568,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
 
 });
+*/
